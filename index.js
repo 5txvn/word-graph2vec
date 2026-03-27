@@ -2,11 +2,21 @@ const fs = require('fs');
 
 class gw2v {
     //init variables
-    constructor(walkLength = 10, walks = 100) {
+    constructor(filePath, logging = false, walkLength = 10, walks = 100, dimensionSize = 300, learningRate = 0.01) {
+        //init constructor args
         this.graph = new Map();
         this.nodeFrequencies = new Map();
+        this.logging = logging;
         this.walkLength = walkLength;
         this.walks = walks;
+        this.dimensionSize = dimensionSize;
+        this.learningRate = learningRate;
+        //build graphs
+        this.buildGraph(filePath);
+        //init weight matricies and word mappings
+        this.wordToId = new Map();
+        this.inputWeights = [];
+        this.outputWeights = [];
     }
 
     //generate co-occurence graph from a .txt corpus w/adjacency lists
@@ -16,7 +26,12 @@ class gw2v {
         for(const sentence of words) {
             for(let i = 0; i < sentence.length; i++) {
                 this.nodeFrequencies.set(sentence[i], this.nodeFrequencies.get(sentence[i]) + 1 || 1)
-                if(!this.graph.has(sentence[i])) this.graph.set(sentence[i], {});
+                if(!this.graph.has(sentence[i])) {
+                    this.graph.set(sentence[i], {});
+                    this.wordToId.set(sentence[i], this.wordToId.size);
+                    this.inputWeights.push(Array.from({length: this.dimensionSize}, () => (Math.random() - 0.5) / this.dimensionSize));
+                    this.outputWeights.push(Array.from({length: this.dimensionSize}, () => 0));
+                }
                 if(sentence[i+1]) {
                     this.graph.get(sentence[i])[sentence[i+1]] = (this.graph.get(sentence[i])[sentence[i+1]] || 0) + 1;
                 }
@@ -72,4 +87,24 @@ class gw2v {
         }
         fs.writeFileSync(filePath, result)
     }
+
+    //train the model
+    train(windowSize = 5, epochs = 5) {
+        for(let epoch = 0; epoch < epochs; epoch++) {
+            for(const walk of this.generateCorpus()) {
+                for(let i = 0; i < walk.length; i++) {
+                    const start = Math.max(0, i-windowSize);
+                    const end = Math.min(walk.length, i+windowSize+1);
+                    for(let j = start; j < end; j++) {
+                        if(i == j) continue;
+                        this.updateWeights(this.wordToId.get(walk[i]), this.wordToId.get(walk[j]));
+                    }
+                }
+            }
+        }
+    }
 }
+
+const model = new gw2v(false, 10, 100, 300);
+model.buildGraph("corpus.txt")
+model.writeCorpus("test.txt")
