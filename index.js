@@ -11,12 +11,12 @@ class gw2v {
         this.walks = walks;
         this.dimensionSize = dimensionSize;
         this.learningRate = learningRate;
-        //build graphs
-        this.buildGraph(filePath);
         //init weight matricies and word mappings
         this.wordToId = new Map();
         this.inputWeights = [];
         this.outputWeights = [];
+        //build graphs
+        this.buildGraph(filePath);
     }
 
     //generate co-occurence graph from a .txt corpus w/adjacency lists
@@ -103,8 +103,23 @@ class gw2v {
             }
         }
     }
+
+    updateWeights(centerId, contextId) {
+        const centerVector = this.inputWeights[centerId];
+        const contextVector = this.outputWeights[contextId];
+
+        //use dot product to score similarity and calculate gradient using sigmoid function
+        let dotProduct = 0;
+        for(let i = 0; i < centerVector.length; i++) dotProduct += centerVector[i] * contextVector[i];
+        const gradient = 1 / (1 + Math.exp(-dotProduct)) - 1;
+
+        for(let i = 0; i < centerVector.length; i++) {
+            const oldWeight = centerVector[i];
+            centerVector[i] -= this.alpha * gradient * contextVector[i];
+            contextVector[i] -= this.alpha * gradient * oldWeight;
+        }
+    }
 }
 
-const model = new gw2v(false, 10, 100, 300);
-model.buildGraph("corpus.txt")
-model.writeCorpus("test.txt")
+const model = new gw2v("corpus.txt", false, 10, 100, 300);
+console.log(model.getVector("akshay"))
