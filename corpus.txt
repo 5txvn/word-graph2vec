@@ -1,5 +1,34 @@
 the cat sat on the rug
 the dog sat on the rug
+the cat and the dog sat on the rug
+the cat sat
+the dog sat
+the cat sat on the rug
+the dog sat on the rug
 the cat and the dog are animals
+the cat is an animal
+the dog is an animal
+animals include the cat
+animals include the dog
+the cat and the dog are animals
+the cat is an animal
+the dog is an animal
 akshay petted the cat
 steven petted the dog
+akshay petted the cat on the rug
+steven petted the dog on the rug
+akshay and steven petted the cat and the dog
+akshay petted the cat
+steven petted the dog
+the cat sat on the rug and akshay petted the cat
+the dog sat on the rug and steven petted the dog
+the cat and the dog sat on the rug and are animals
+the cat is on the rug
+the dog is on the rug
+the cat and the dog are on the rug
+the rug is where the cat sat
+the rug is where the dog sat
+akshay is with the cat
+steven is with the dog
+akshay is with the cat on the rug
+steven is with the dog on the rug
